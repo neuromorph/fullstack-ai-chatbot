@@ -27,3 +27,7 @@ export REDIS_PORT=
 Add Hugging Face config to .env under worker:  
 export HUGGINGFACE_INFERENCE_TOKEN=  
 export MODEL_URL=  
+
+
+
+![UI Enter name](UI_Name.png)  ![UI Chat screen](UI_Chat.png)
