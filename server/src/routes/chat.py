@@ -1,7 +1,9 @@
 import os
 from fastapi import APIRouter, WebSocket,  Request, Depends, HTTPException, WebSocketDisconnect
+from fastapi.responses import FileResponse
 import uuid
 from rejson import Path
+import json
 
 from ..socket.connection import ConnectionManager
 from ..socket.utils import get_token
@@ -18,7 +20,16 @@ chat = APIRouter()
 manager = ConnectionManager()
 redis = Redis()
 
-# @route   POST /token
+
+# @route   /
+# @desc    home
+# @access  Public
+@chat.get("/")
+def homepage():
+    return FileResponse('../client/index.html', media_type='text/html')
+
+
+# @route   POSjs jquery hide and unhide divT /token
 # @desc    Route to generate chat token
 # @access  Public
 
@@ -79,25 +90,33 @@ async def websocket_endpoint(websocket: WebSocket, token: str = Depends(get_toke
     try:
         while True:
             data = await websocket.receive_text()
-            print(data)
+            print("Websocket data:",data)
             stream_data = {}
             stream_data[str(token)] = str(data)
             await producer.add_to_stream(stream_data, "message_channel")
             response = await consumer.consume_stream(stream_channel="response_channel", count=1, block=0)
-            print(response)
+            print("stream_data:", stream_data)
 
             for stream, messages in response:
                 for message in messages:
                     response_token = [k.decode('utf-8')
                                       for k, v in message[1].items()][0]
-
+                    print("toen:", token)
+                    print("resp token:", response_token)
                     if token == response_token:
                         response_message = [v.decode('utf-8')
                                             for k, v in message[1].items()][0]
-
-                        print(message[0].decode('utf-8'))
-                        print(token)
-                        print(response_token)
+                        print("Message1 Items:",message[1].items())
+                        print("Response Msg:",response_message)
+                        response_message = json.dumps(response_message)
+                        # response_message = json.loads(response_message)
+                        # response_message3 = json.dumps(response_message2)
+                        # print(message[0].decode('utf-8'))
+                        print("json msg:",response_message )
+                        print("str msg:", str(response_message))
+                        # print("Json Msg1:", response_message1)
+                        # print("Json Msg2:", response_message2)
+                        # print("Json Msg3:", response_message3)
 
                         await manager.send_personal_message(response_message, websocket)
 

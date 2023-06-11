@@ -1,5 +1,6 @@
 from src.redis.config import Redis
 import asyncio
+import json
 from src.redis.cache import Cache
 from src.model.gptj import GPT
 from src.schema.chat import Message
@@ -34,7 +35,7 @@ async def main():
                     # print(token)
 
                     # Create a new message instance and add to cache, specifying the source as human
-                    msg = Message(msg=message, source='Human')
+                    msg = Message(msg=message, source="Human")
 
                     await cache.add_message_to_cache(token=token, message_data=msg.dict())
 
@@ -44,7 +45,7 @@ async def main():
                     print(data)
 
                     # Clean message input and send to query
-                    message_data = data['messages'][-2:]
+                    message_data = data['messages'][-1:]
 
                     input = ["" + i['msg'] for i in message_data]
                     input = " ".join(input)
@@ -54,14 +55,14 @@ async def main():
 
                     msg = Message(
                         msg=res,
-                        source='Bot'
+                        source="Bot"
                     )
 
                     print(f'Response from GPT: {msg}')
 
                     
                     stream_data = {}
-                    stream_data[str(token)] = str(msg.dict())
+                    stream_data[str(token)] = json.dumps(msg.dict())
                     await producer.add_to_stream(stream_data, "response_channel")
 
 

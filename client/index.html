@@ -1,0 +1,110 @@
+<!DOCTYPE html lang="en">
+
+<head>
+
+	<!-- seo related -->
+	<title>Fullstack AI Chatbot</title>
+
+	<!-- meta related -->
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="Content-Type" content="text/html" />
+
+	<!-- vendor css & style files -->
+	<!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"> -->
+	<link href="https://fonts.googleapis.com/css?family=Josefin+Sans:300|Open+Sans:300|Oxygen|Material+Icons"
+		rel="stylesheet">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+
+	<!-- custom css -->
+	<link rel="stylesheet" type="text/css" href="static/main.css">
+
+	<!-- Favicon Links -->
+    <link
+      rel="icon"
+      href="static/img/bot.png"
+    />
+
+</head>
+
+<body >
+
+	<div id="name_div" class="container" >
+
+		<div class="row padded_row">
+
+			<!-- left side content -->
+			<div class="col-md-7">
+
+				<div class="chat_window">
+
+					<div class="top_menu">
+						<div class="title">Fullstack AI ChatBot</div>
+					</div>
+
+					<!-- input -->
+					<div class="bottom_wrapper">
+						<input id="name_input" placeholder="Enter your name" required/>
+						<button id="name_button" type="button" class="btn btn-success app_button_1">Send</button>
+					</div>
+
+				</div>
+
+			</div>
+
+
+		</div>
+
+	</div>
+
+	<div id="loading_div" class="container" >
+		<div class="col-md-7">
+
+				<div class="connect_warn">
+					<div id="warn_msg" class="title"></div>
+				</div>
+		</div>
+	</div>
+
+	<div id="chat_div" class="container" >
+
+		<div class="row padded_row">
+
+			<!-- left side content -->
+			<div class="col-md-10">
+
+				<div class="chat_window">
+
+					<div class="top_menu">
+						<div class="title">Fullstack AI ChatBot 
+							<button id="close_button" class="btn btn-danger butn">X</button>
+						</div> 
+					</div>
+
+					<!-- dynamically rendered -->
+					<ul class="messages"></ul>
+
+					<!-- input -->
+					<div class="bottom_wrapper">
+						<input id="msg_input" placeholder="Enter your message" />
+						<button id="send_button" class="btn btn-success app_button_1">Send</button>
+					</div>
+
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<!-- vendor script files -->
+	<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js">
+	</script>
+
+	<!-- custom scripts -->
+	<script src="static/main.js"></script>
+</body>
+
+</html>
