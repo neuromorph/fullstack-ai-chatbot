@@ -1,4 +1,3 @@
-from .config import Redis
 
 class StreamConsumer:
     def __init__(self, redis_client):

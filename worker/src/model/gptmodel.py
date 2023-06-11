@@ -5,6 +5,10 @@ import json
 
 load_dotenv()
 
+'''
+Using Hugging Face On Demand Inference API with a conersational model.
+Choose a model from Hugging Face and also create a Hugging Face Inference Token and save details in .env
+'''
 class GPT:
     def __init__(self):
         self.url = os.environ.get('MODEL_URL')
@@ -15,20 +19,18 @@ class GPT:
             }
 
 
-    def query(self, input: str) -> list:
+    async def query(self, input: str) -> list:
         self.payload["inputs"]["text"] = input
         # self.payload["inputs"]["past_user_inputs"] = ["Do you know plot of movie Titanic?"]
         # self.payload["inputs"]["generated_responses"] = ["Yes, I do."]
-        # data = json.dumps(self.payload)
         response = requests.post(
             self.url, headers=self.headers, json=self.payload)
         output = json.loads(response.content.decode("utf-8"))
-        # print(output)
+
         if 'generated_text' in output:
             resp = output['generated_text']
         else:
             resp = output['error']
-        # print(resp)
         return resp
 
 if __name__ == "__main__":

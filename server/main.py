@@ -1,10 +1,11 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 import uvicorn
 import os
 from dotenv import load_dotenv
-from src.routes.chat import chat
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+
+from src.routes.chat import chat
 
 load_dotenv()
 

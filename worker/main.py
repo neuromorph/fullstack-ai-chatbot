@@ -2,12 +2,12 @@ from src.redis.config import Redis
 import asyncio
 import json
 from src.redis.cache import Cache
-from src.model.gptj import GPT
+from src.model.gptmodel import GPT
 from src.schema.chat import Message
 from src.redis.stream import StreamConsumer
 from src.redis.producer import Producer
 
-# testtoken = "74547383-ca91-46b7-95df-8a3b39b154ca"
+
 redis = Redis()
 
 async def main():
@@ -32,7 +32,6 @@ async def main():
                             for k, v in message[1].items()][0]
                     message = [v.decode('utf-8')
                               for k, v in message[1].items()][0]
-                    # print(token)
 
                     # Create a new message instance and add to cache, specifying the source as human
                     msg = Message(msg=message, source="Human")
@@ -42,25 +41,19 @@ async def main():
                     # Get chat history from cache
                     data = await cache.get_chat_history(token=token)
 
-                    print(data)
-
-                    # Clean message input and send to query
+                    # Clean message input and send to model query
                     message_data = data['messages'][-1:]
 
                     input = ["" + i['msg'] for i in message_data]
                     input = " ".join(input)
 
-                    print(f'Input to GPT: {input}')
-                    res = GPT().query(input=input)
+                    res = await GPT().query(input=input)
 
                     msg = Message(
                         msg=res,
                         source="Bot"
                     )
-
-                    print(f'Response from GPT: {msg}')
-
-                    
+                   
                     stream_data = {}
                     stream_data[str(token)] = json.dumps(msg.dict())
                     await producer.add_to_stream(stream_data, "response_channel")

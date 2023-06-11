@@ -4,6 +4,11 @@ var token;
 var ws;
 
 
+/**
+ * Collect user name and get token.
+ * Make websocket connection using token.
+ * When message received on websocket, show it as bot message.
+ */
 $('#name_button').on('click', function (e) {
 	if($('#name_input').val() == ''){
 		$('#warn_msg').html('Please enter your name');
@@ -41,23 +46,25 @@ $('#name_button').on('click', function (e) {
 					setTimeout(function () {
 						showBotMessage(resp);
 					}, 300);
-					$('#msg_input').val('');
+					$('#msg_input')[0].placeholder = "Enter your message";
 
 				}
 				ws.onclose = function(e){
-					console.log('Websocket Closed: '+e);
+					console.log('Websocket Closed.');
+					$('#name_button')[0].disabled = false;
+					$('#name_input').val('');
 				}
 				ws.onerror = function(e){
-					console.log("WS Error: "+e)
+					console.log(e)
+					$('#name_button')[0].disabled = false;
 				}
 			},
 			error: function(e){
-				console.log("Error in ws API: " + e);
+				console.log(e);
+				$('#name_button')[0].disabled = false;
 			}
 		});
 
-		$('#name_button')[0].disabled = false;
-		$('#name_input').val('');
 	}
 });
 
@@ -141,17 +148,19 @@ function showBotMessage(message, datetime) {
  */
 $('#send_button').on('click', function (e) {
 	// get and show message and reset input
-	input = $('#msg_input').val()
+	input = $('#msg_input').val();
 	showUserMessage(input);
-	$('#msg_input').val('ChatBot is typing...');
+	$('#msg_input').val('');
+	$('#msg_input')[0].placeholder = "ChatBot is typing...";
 
 	ws.send(input);
 
 
 });
 
-
-// Execute above function when the user presses Enter key on the keyboard
+/**
+* Execute above function when the user presses Enter key on the keyboard
+*/
 $('#msg_input').keypress(function(event) {
   // If the user presses the "Enter" key on the keyboard
   if (event.key === "Enter") {
@@ -160,10 +169,13 @@ $('#msg_input').keypress(function(event) {
   }
 });
 
-
+/**
+ * Close websocket connection and show name div for new chat
+*/
 $('#close_button').on('click', function (e) {
 	ws.close();
 	$('#loading_div').hide();
+	$('#msg_list').empty();
 	$('#chat_div').hide();
 	$('#name_div').show();
 	$('#name_input').focus();
@@ -172,7 +184,7 @@ $('#close_button').on('click', function (e) {
 
 
 /**
- * Set initial bot message to the screen for the user.
+ * Show name div, hide others and focus input.
  */
 $(window).on('load', function () {
 	$('#loading_div').hide();

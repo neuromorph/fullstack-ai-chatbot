@@ -16,6 +16,7 @@ from ..schema.chat import Chat
 
 from ..redis.stream import StreamConsumer
 
+
 chat = APIRouter()
 manager = ConnectionManager()
 redis = Redis()
@@ -25,11 +26,11 @@ redis = Redis()
 # @desc    home
 # @access  Public
 @chat.get("/")
-def homepage():
+async def homepage():
     return FileResponse('../client/index.html', media_type='text/html')
 
 
-# @route   POSjs jquery hide and unhide divT /token
+# @route   POST /token
 # @desc    Route to generate chat token
 # @access  Public
 
@@ -84,44 +85,31 @@ async def websocket_endpoint(websocket: WebSocket, token: str = Depends(get_toke
     await manager.connect(websocket)
     redis_client = await redis.create_connection()
     producer = Producer(redis_client)
-    json_client = redis.create_rejson_connection()
+    # json_client = redis.create_rejson_connection()
     consumer = StreamConsumer(redis_client)
 
     try:
         while True:
             data = await websocket.receive_text()
-            print("Websocket data:",data)
             stream_data = {}
             stream_data[str(token)] = str(data)
             await producer.add_to_stream(stream_data, "message_channel")
             response = await consumer.consume_stream(stream_channel="response_channel", count=1, block=0)
-            print("stream_data:", stream_data)
 
             for stream, messages in response:
                 for message in messages:
                     response_token = [k.decode('utf-8')
                                       for k, v in message[1].items()][0]
-                    print("toen:", token)
-                    print("resp token:", response_token)
+
                     if token == response_token:
                         response_message = [v.decode('utf-8')
                                             for k, v in message[1].items()][0]
-                        print("Message1 Items:",message[1].items())
-                        print("Response Msg:",response_message)
+
                         response_message = json.dumps(response_message)
-                        # response_message = json.loads(response_message)
-                        # response_message3 = json.dumps(response_message2)
-                        # print(message[0].decode('utf-8'))
-                        print("json msg:",response_message )
-                        print("str msg:", str(response_message))
-                        # print("Json Msg1:", response_message1)
-                        # print("Json Msg2:", response_message2)
-                        # print("Json Msg3:", response_message3)
 
                         await manager.send_personal_message(response_message, websocket)
 
                     await consumer.delete_message(stream_channel="response_channel", message_id=message[0].decode('utf-8'))
 
-            # await manager.send_personal_message(f"GPT Bot response placeholder", websocket)
     except WebSocketDisconnect:
         manager.disconnect(websocket)
