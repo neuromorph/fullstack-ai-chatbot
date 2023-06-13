@@ -1,4 +1,5 @@
 import os
+from typing import List
 from dotenv import load_dotenv
 import requests
 import json
@@ -19,10 +20,10 @@ class GPT:
             }
 
 
-    async def query(self, input: str) -> list:
+    async def query(self, input: str, past_user_inputs: List[str], generated_responses: List[str]) -> list:
         self.payload["inputs"]["text"] = input
-        # self.payload["inputs"]["past_user_inputs"] = ["Do you know plot of movie Titanic?"]
-        # self.payload["inputs"]["generated_responses"] = ["Yes, I do."]
+        self.payload["inputs"]["past_user_inputs"] = past_user_inputs
+        self.payload["inputs"]["generated_responses"] = generated_responses
         response = requests.post(
             self.url, headers=self.headers, json=self.payload)
         output = json.loads(response.content.decode("utf-8"))
@@ -30,7 +31,7 @@ class GPT:
         if 'generated_text' in output:
             resp = output['generated_text']
         else:
-            resp = output['error']
+            resp = f"{output['error']}. Estimated time: {output['estimated_time']}"
         return resp
 
 if __name__ == "__main__":

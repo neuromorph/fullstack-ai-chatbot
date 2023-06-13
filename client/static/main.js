@@ -152,8 +152,14 @@ $('#send_button').on('click', function (e) {
 	showUserMessage(input);
 	$('#msg_input').val('');
 	$('#msg_input')[0].placeholder = "ChatBot is typing...";
-
-	ws.send(input);
+	
+	if(ws.readyState == ws.OPEN){
+		ws.send(input);
+	}
+	else{
+		$('#warn_msg').html("Connection closed. Please refresh or start new chat.");
+		$('#loading_div').show();
+	}
 
 
 });

@@ -44,10 +44,11 @@ async def main():
                     # Clean message input and send to model query
                     message_data = data['messages'][-1:]
 
-                    input = ["" + i['msg'] for i in message_data]
-                    input = " ".join(input)
+                    past_user_inputs = ["" + i['msg'] for i in message_data if i['source'] == "Human"]
+                    generated_responses = ["" + i['msg'] for i in message_data if i['source'] == "Bot"]
+                    input = message
 
-                    res = await GPT().query(input=input)
+                    res = await GPT().query(input=input, past_user_inputs=past_user_inputs, generated_responses=generated_responses)
 
                     msg = Message(
                         msg=res,
@@ -61,9 +62,8 @@ async def main():
 
                     await cache.add_message_to_cache(token=token, message_data=msg.dict())
 
-                # Delete messaage from queue after it has been processed
-
-                await consumer.delete_message(stream_channel="message_channel", message_id=message_id)
+                    # Delete messaage from queue after it has been processed
+                    await consumer.delete_message(stream_channel="message_channel", message_id=message_id)
 
 
 
