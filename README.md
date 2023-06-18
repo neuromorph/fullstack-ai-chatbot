@@ -1,16 +1,17 @@
-A demo of a fullstack AI chatbot using FastAPI, Redis and Hugging Face Inference API. 
-[FastAPI](https://fastapi.tiangolo.com/) is used for the webserver talking to Client with REST and Websocket endpoints.
-Client is a simple js/jquery based UI.
-[Redis enterprise cloud](https://redis.com/try-free) DB (free) instance is used as cache to save chat data.
-Redis is also used for message queues (message channel and response channel) between Server and Worker.
-Worker connects to Redis streams/channels to communicate with server and also connects to Hugging Face On Demand [Inference API](https://huggingface.co/docs/api-inference/detailed_parameters#conversational-task) to query a hosted model.
-The backend is based on an in depth [tutorial](https://blog.stephensanwo.dev/build-a-fullstack-ai-chatbot/series) by Stephen Sanwo written in collaboration with Redis. The frontend UI is based on a [simple UI](https://github.com/PandaWhoCodes/chatbot-frontend/) project.
+# Fullstack AI Chatbot
 
-![Fullstack AI Chatbot Architecture](FullstackChatbotArch.png)
+A demo of a fullstack AI chatbot using FastAPI, Redis and Hugging Face Inference API.  
+* [FastAPI](https://fastapi.tiangolo.com/) is used as the webserver talking to Client with REST and Websocket endpoints. The server uses two concurrent coroutines to talk to the clients and Redis streams.  
+* Client is a simple js/jquery based UI.  
+* [Redis enterprise cloud](https://redis.com/try-free) DB (free) instance is used as cache to save chat data. Redis is also used for message queues (message channel and response channel) between Server and Worker.  
+* Worker connects to Redis streams/channels to communicate with server and also connects to Hugging Face On Demand [Inference API](https://huggingface.co/docs/api-inference/detailed_parameters#conversational-task) to query a hosted model.  
+* The backend is based on an in depth [tutorial](https://blog.stephensanwo.dev/build-a-fullstack-ai-chatbot/series) by Stephen Sanwo written in collaboration with Redis. The frontend UI is based on a [simple UI](https://github.com/PandaWhoCodes/chatbot-frontend/) project.
 
-
-
-Environment variables:  
+![Fullstack AI Chatbot Architecture](FullstackChatbotArch.png)  
+*Fig: Architecture showing components and interfaces*  
+  
+  
+<h2>Environment variables:  </h2>
 Set app environment to development (for dev).  
 export APP_ENV=development
 
@@ -28,6 +29,6 @@ Add Hugging Face config to .env under worker:
 export HUGGINGFACE_INFERENCE_TOKEN=  
 export MODEL_URL=  
 
-
+<h2>UI Sample: </h2>  
 
 ![UI Enter name](UI_Name.png)  ![UI Chat screen](UI_Chat.png)
